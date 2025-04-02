@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/invopop/jsonschema/examples/nested"
+	"github.com/furre-dev/jsonschema-nullable/examples/nested"
 )
 
 // User is used as a base to provide tests for comments.
