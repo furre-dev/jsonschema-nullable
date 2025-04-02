@@ -531,7 +531,7 @@ func (r *Reflector) reflectStructFields(st *Schema, definitions Definitions, t r
 
 		if nullable {
 			property = &Schema{
-				OneOf: []*Schema{
+				AnyOf: []*Schema{
 					property,
 					{
 						Type: "null",
@@ -1026,7 +1026,7 @@ func (r *Reflector) reflectFieldName(f reflect.StructField) (string, bool, bool,
 	}
 	requiredFromJSONSchemaTags(schemaTags, &required)
 
-	nullable := nullableFromJSONSchemaTags(schemaTags)
+	nullable := f.Type.Kind() == reflect.Ptr
 
 	if f.Anonymous && jsonTags[0] == "" {
 		// As per JSON Marshal rules, anonymous structs are inherited
