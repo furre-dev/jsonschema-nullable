@@ -1,4 +1,4 @@
-module github.com/invopop/jsonschema
+module github.com/furre-dev/jsonschema-nullable
 
 go 1.18
 
