@@ -950,16 +950,18 @@ func requiredFromJSONSchemaTags(tags []string, val *bool) {
 	}
 }
 
-func nullableFromJSONSchemaTags(tags []string) bool {
+func nullableFromJSONSchemaTags(tags []string, isPointer bool) bool {
 	if ignoredByJSONSchemaTags(tags) {
 		return false
 	}
 	for _, tag := range tags {
-		if tag == "nullable" {
-			return true
+		if tag == "non-nullable" {
+			return false
 		}
 	}
-	return false
+
+	// if there are no tags, return true if its a pointer type, return false if it's not a pointer type.
+	return isPointer
 }
 
 func ignoredByJSONTags(tags []string) bool {
@@ -1026,7 +1028,9 @@ func (r *Reflector) reflectFieldName(f reflect.StructField) (string, bool, bool,
 	}
 	requiredFromJSONSchemaTags(schemaTags, &required)
 
-	nullable := f.Type.Kind() == reflect.Ptr
+	typeIsPointer := f.Type.Kind() == reflect.Ptr
+
+	nullable := nullableFromJSONSchemaTags(schemaTags, typeIsPointer)
 
 	if f.Anonymous && jsonTags[0] == "" {
 		// As per JSON Marshal rules, anonymous structs are inherited
