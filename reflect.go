@@ -414,9 +414,17 @@ func (r *Reflector) reflectSliceOrArray(definitions Definitions, t reflect.Type,
 		// NOTE: ContentMediaType is not set here
 		st.ContentEncoding = "base64"
 	} else {
-		st.Type = "array"
-		st.Items = r.refOrReflectTypeToSchema(definitions, t.Elem())
+		arraySchema := &Schema{
+			Type:  "array",
+			Items: r.refOrReflectTypeToSchema(definitions, t.Elem()),
+		}
+
+		st.AnyOf = []*Schema{
+			arraySchema,
+			{Type: "null"},
+		}
 	}
+
 }
 
 func (r *Reflector) reflectMap(definitions Definitions, t reflect.Type, st *Schema) {
@@ -951,6 +959,7 @@ func requiredFromJSONSchemaTags(tags []string, val *bool) {
 }
 
 func nullableFromJSONSchemaTags(tags []string, isPointer bool) bool {
+
 	if ignoredByJSONSchemaTags(tags) {
 		return false
 	}
